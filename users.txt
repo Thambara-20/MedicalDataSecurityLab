@@ -1,6 +1,0 @@
-patient1,ec6ef230f1828039ee794566b9c58adc,patient,2
-staff1,8ddf878039b70767c4a5bcf4f0c4f65e,staff,5
-staff2,fac989447cad2edbc89fbcba70003b36,staff,10
-staff3,c0828e0381730befd1f7a025057c74fb,staff,10
-staff4,7e7cb6814b74d6596098fc80127569a5,staff,5
-patient4,13207e3d5722030f6c97d69b4904d39d,patient,2
