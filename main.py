@@ -16,17 +16,20 @@ def create_user(username, password, user_type):
     if user_type == "staff":
         staff_verification = input("Enter staff verification code: ")
         # You should replace 'your_verification_code' with the actual code to verify staff status.
-        if staff_verification != 1234:
+        if staff_verification != "1234":
             print("Staff verification code is incorrect. Staff registration denied.")
             return
 
     hashed_password = hash_password(password)
     with open("users.txt", "a") as user_file:
         if user_type == "staff":
-            privilege_level = 1  # Assign a default privilege level for staff members
+            privilege_level = int(input("Enter Privilege Level "))
+            privilege_level = 5 if privilege_level < 5 else privilege_level
         else:
-            privilege_level = 0  # Assign a default privilege level for patients
+            privilege_level = int(input("Enter Privilege Level "))
+            privilege_level = 4 if privilege_level > 5 else privilege_level
         user_file.write(f"{username},{hashed_password},{user_type},{privilege_level}\n")
+        print(f"User Signup Successful.. [ username: {username}  privilege_level: {privilege_level} ]")
 
 
 def check_credentials(username, password):
@@ -57,8 +60,8 @@ def write_data(username, password, data_type, data, sensitivity_level, patient):
         print("Patient doesn't exist.")
         return
 
-    if sensitivity_level > 1:
-        print("Sensitivity level should not be greater than 1.")
+    if sensitivity_level > 10:
+        print("Sensitivity level should not be greater than 10.")
         return
 
     with open(f"{data_type}.txt", "a") as data_file:
@@ -67,18 +70,33 @@ def write_data(username, password, data_type, data, sensitivity_level, patient):
 
 
 def read_data(username, password, data_type):
-    privilege_level = check_credentials(username, password)[1]
+    user_type, privilege_level = check_credentials(username, password)
+    found_data = False  # Initialize a flag to track if any data is found
+
     try:
         with open(f"{data_type}.txt", "r") as data_file:
             for line in data_file:
                 data = line.strip().split(",")
                 sensitivity_level = int(data[2])
-                if privilege_level >= sensitivity_level:
+
+                # Check if user_type is patient and data belongs to the same patient
+                if user_type == "patient" and data[0] == username and privilege_level >= sensitivity_level:
                     print(f"Patient: {data[0]} Data: {data[1]}, Sensitivity Level: {sensitivity_level}")
+                    found_data = True  # Set the flag to True as data is found
+
+                # If user_type is not patient, show records based on privilege level
+                elif user_type != "patient" and privilege_level >= sensitivity_level:
+                    print(f"Patient: {data[0]} Data: {data[1]}, Sensitivity Level: {sensitivity_level}")
+                    found_data = True  # Set the flag to True as data is found
+
     except FileNotFoundError:
         print(f"Record of File '{data_type}.txt' not found.")
     except Exception as e:
         print(f"An error occurred: {str(e)}")
+
+    if not found_data:
+        print("No data")
+
 
 
 username = None
@@ -97,7 +115,7 @@ while True:
             print("Invalid user type. Please choose 'patient' or 'staff'.")
         else:
             create_user(username, password, user_type)
-            print("User created successfully.")
+
 
     elif choice == "2":
         username = input("Enter username: ")
