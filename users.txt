@@ -1,1 +1,4 @@
-ss,9f6e6800cfae7749eb6c486619254b9c,ww,1
+user1,5f4dcc3b5aa765d61d8327deb882cf99,user,1
+
+user2,5f4dcc3b5aa765d61d8327deb882cf99,user,0
+user3,5f4dcc3b5aa765d61d8327deb882cf99,user,5
