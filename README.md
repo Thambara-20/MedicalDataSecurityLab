@@ -12,3 +12,6 @@ This Python program is designed for the secure processing of medical data. It al
 
 - User account information is stored in a configuration file, including user details.
 - Data records are stored in separate files based on their types, each with associated sensitivity levels for access control.
+
+## Languages
+- Python
