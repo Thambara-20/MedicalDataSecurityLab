@@ -84,11 +84,11 @@ def read_data(username, password, data_type):
                 sensitivity_level = int(data[3])
                 
                 if user_type == "patient" and data[0] == username and privilege_level >= sensitivity_level:
-                    print(f"Patient: {data[0]} Data-type: {data[1]} Data: {data[2]} Date:{data[4]} Sensitivity Level: {sensitivity_level}")
+                    print(f"Patient: {data[0]} Data-type: {data[1]} Data: {data[2]} Date:{data[4]}")
                     found_data = True  
 
                 elif user_type != "patient" and data[1] == data_type :
-                    print(f"Patient: {data[0]} Data-type: {data[1]} Data: {data[2]} Date:{data[4]} Sensitivity Level: {sensitivity_level}")
+                    print(f"Patient: {data[0]} Data-type: {data[1]} Data: {data[2]} Date:{data[4]}")
                     found_data = True  
 
     except FileNotFoundError:
