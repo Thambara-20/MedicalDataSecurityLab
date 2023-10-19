@@ -43,6 +43,49 @@ def read_data(username, password, data_type):
             if privilege_level >= sensitivity_level:
                 print(f"Data: {data[1]}, Sensitivity Level: {sensitivity_level}")
 
-create_user("user3", "password", "user", 5)
-write_data('user1',"password",'sickness',"data...",2)
-read_data('user1',"password",'sickness')
+
+username = None
+password = None
+user_type = None
+privilege_level = 0
+
+while True:
+    choice = input("Enter your choice: ")
+
+    if choice == 1:
+        username = input("Enter username: ")
+        password = input("Enter password: ")
+        user_type = input("Enter user type (patient or staff): ")
+        privilege_level = int(input("Enter privilege level: "))
+        create_user(username, password, user_type, privilege_level)
+        print("User created successfully.")
+
+    elif choice == "2":
+        username = input("Enter username: ")
+        password = input("Enter password: ")
+        user_type, privilege_level = check_credentials(username, password)
+        if user_type:
+            print(f"Login successful. User type: {user_type}, Privilege Level: {privilege_level}")
+        else:
+            print("Invalid credentials.")
+
+    elif choice == "3":
+        if user_type == "staff":
+            print("dddddddddddddd")
+            data_type = input("Enter data type (personal, sickness, drug, lab): ")
+            data = input("Enter data: ")
+            sensitivity_level = int(input("Enter sensitivity level: "))
+            write_data(username, data_type, data, sensitivity_level)
+        else:
+            print("Patients cannot write data.")
+
+    elif choice == "4":
+        data_type = input("Enter data type (personal, sickness, drug, lab): ")
+        read_data(username, data_type)
+
+    elif choice == "5":
+        print("Exiting program.")
+        break
+
+    else:
+        print("Invalid choice. Please try again.")
