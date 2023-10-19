@@ -1,0 +1,3 @@
+# config.py
+
+STAFF_VERIFICATION_CODE = "20232023"

@@ -1,5 +1,6 @@
 import hashlib
-
+import time
+import config
 
 def hash_password(password):
     return hashlib.md5(password.encode()).hexdigest()
@@ -16,17 +17,17 @@ def create_user(username, password, user_type):
     if user_type == "staff":
         staff_verification = input("Enter staff verification code: ")
 
-        if staff_verification != "1234":
+        if staff_verification != config.STAFF_VERIFICATION_CODE:
             print("Staff verification code is incorrect. Staff registration denied.")
             return
 
     hashed_password = hash_password(password)
     with open("users.txt", "a") as user_file:
         if user_type == "staff":
-            privilege_level = int(input("Enter Privilege Level greater than 5"))
+            privilege_level = int(input("Enter Privilege Level greater than 5 "))
             privilege_level = 5 if privilege_level < 5 else privilege_level
         else:
-            privilege_level = int(input("Enter Privilege Level less than 5"))
+            privilege_level = int(input("Enter Privilege Level less than 5 "))
             privilege_level = 4 if privilege_level > 5 else privilege_level
         user_file.write(f"{username},{hashed_password},{user_type},{privilege_level}\n")
         print(f"User Signup Successful.. [ username: {username}  privilege_level: {privilege_level} ]")
@@ -63,9 +64,12 @@ def write_data(username, password, data_type, data, sensitivity_level, patient):
     if sensitivity_level > 10:
         print("Sensitivity level should not be greater than 10.")
         return
+    
+    timestamp = int(time.time()) 
+    formatted_date = time.strftime("%Y/%m/%d", time.gmtime(timestamp))
 
-    with open(f"{data_type}.txt", "a") as data_file:
-        data_file.write(f"{patient},{data},{sensitivity_level}\n")
+    with open("data.txt", "a") as data_file:
+        data_file.write(f"{patient},{data_type},{data},{sensitivity_level},{formatted_date}\n")
         print("Data written successfully.")
 
 
@@ -74,26 +78,26 @@ def read_data(username, password, data_type):
     found_data = False 
 
     try:
-        with open(f"{data_type}.txt", "r") as data_file:
+        with open("data.txt", "r") as data_file:
             for line in data_file:
                 data = line.strip().split(",")
-                sensitivity_level = int(data[2])
-
+                sensitivity_level = int(data[3])
+                
                 if user_type == "patient" and data[0] == username and privilege_level >= sensitivity_level:
-                    print(f"Patient: {data[0]} Data: {data[1]}, Sensitivity Level: {sensitivity_level}")
+                    print(f"Patient: {data[0]} Data-type: {data[1]} Data: {data[2]} Date:{data[4]} Sensitivity Level: {sensitivity_level}")
                     found_data = True  
 
-                elif user_type != "patient" and privilege_level >= sensitivity_level:
-                    print(f"Patient: {data[0]} Data: {data[1]}, Sensitivity Level: {sensitivity_level}")
+                elif user_type != "patient" and data[1] == data_type :
+                    print(f"Patient: {data[0]} Data-type: {data[1]} Data: {data[2]} Date:{data[4]} Sensitivity Level: {sensitivity_level}")
                     found_data = True  
 
     except FileNotFoundError:
-        print(f"Record of File '{data_type}.txt' not found.")
+        print(f"Record of File not found.")
     except Exception as e:
         print(f"An error occurred: {str(e)}")
 
     if not found_data:
-        print("No data")
+        print("No data can be provided")
 
 
 
@@ -132,7 +136,7 @@ while True:
             sensitivity_level = int(input("Enter sensitivity level:0 to 10 "))
             write_data(username, password, data_type, data, sensitivity_level, patient)
         else:
-            print("Patients cannot write data.")
+            print("A staff member should be logged in.")
 
     elif choice == "4":
         data_type = input("Enter data type (personal, sickness, drug, lab): ")
