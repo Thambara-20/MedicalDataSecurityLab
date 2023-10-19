@@ -1,4 +1,9 @@
 Patient1,sickness,sickness data...,1,2023/10/19
 Patient1,personal,personal data...,1,2023/10/19
 Patient1,lab,lab data...,1,2023/10/19
+Patient1,drug,drug data...,3,2023/10/19
+Patient1,lab,lab data...,4,2023/10/19
+Patient1,lab,lab data...,4,2023/10/19
 Patient1,drug,drug data...,1,2023/10/19
+Patient1,drug,drug data...,9,2023/10/19
+Patient1,personal,personal data...,7,2023/10/19
