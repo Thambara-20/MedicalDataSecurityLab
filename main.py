@@ -1,18 +1,33 @@
 import hashlib
 
+
 def hash_password(password):
     return hashlib.md5(password.encode()).hexdigest()
 
-def create_user(username, password, user_type, privilege_level):
-    hashed_password = hash_password(password)
+
+def create_user(username, password, user_type):
     with open("users.txt", "r") as user_file:
         for line in user_file:
             data = line.strip().split(",")
             if data[0] == username:
                 print("Username already exists.")
-                return 
+                return
+
+    if user_type == "staff":
+        staff_verification = input("Enter staff verification code: ")
+        # You should replace 'your_verification_code' with the actual code to verify staff status.
+        if staff_verification != 1234:
+            print("Staff verification code is incorrect. Staff registration denied.")
+            return
+
+    hashed_password = hash_password(password)
     with open("users.txt", "a") as user_file:
+        if user_type == "staff":
+            privilege_level = 1  # Assign a default privilege level for staff members
+        else:
+            privilege_level = 0  # Assign a default privilege level for patients
         user_file.write(f"{username},{hashed_password},{user_type},{privilege_level}\n")
+
 
 def check_credentials(username, password):
     with open("users.txt", "r") as user_file:
@@ -22,26 +37,48 @@ def check_credentials(username, password):
                 return data[2], int(data[3])
     return None, 0
 
-def write_data(username, password, data_type, data, sensitivity_level):
+
+def check_user(user_name):
+    with open("users.txt", "r") as user_file:
+        for line in user_file:
+            data = line.strip().split(",")
+            if data[0] == user_name:
+                return True
+    return False
+
+
+def write_data(username, password, data_type, data, sensitivity_level, patient):
     privilege_level = check_credentials(username, password)[1]
 
     if privilege_level < sensitivity_level:
         print("Insufficient privilege level to write this data.")
         return
+    if check_user(patient) == False:
+        print("Patient doesn't exist.")
+        return
+
+    if sensitivity_level > 1:
+        print("Sensitivity level should not be greater than 1.")
+        return
 
     with open(f"{data_type}.txt", "a") as data_file:
-        data_file.write(f"{username},{data},{sensitivity_level}\n")
+        data_file.write(f"{patient},{data},{sensitivity_level}\n")
         print("Data written successfully.")
+
 
 def read_data(username, password, data_type):
     privilege_level = check_credentials(username, password)[1]
-
-    with open(f"{data_type}.txt", "r") as data_file:
-        for line in data_file:
-            data = line.strip().split(",")
-            sensitivity_level = int(data[2])
-            if privilege_level >= sensitivity_level:
-                print(f"Data: {data[1]}, Sensitivity Level: {sensitivity_level}")
+    try:
+        with open(f"{data_type}.txt", "r") as data_file:
+            for line in data_file:
+                data = line.strip().split(",")
+                sensitivity_level = int(data[2])
+                if privilege_level >= sensitivity_level:
+                    print(f"Patient: {data[0]} Data: {data[1]}, Sensitivity Level: {sensitivity_level}")
+    except FileNotFoundError:
+        print(f"Record of File '{data_type}.txt' not found.")
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
 
 
 username = None
@@ -52,13 +89,15 @@ privilege_level = 0
 while True:
     choice = input("Enter your choice: ")
 
-    if choice == 1:
+    if choice == "1":
         username = input("Enter username: ")
         password = input("Enter password: ")
         user_type = input("Enter user type (patient or staff): ")
-        privilege_level = int(input("Enter privilege level: "))
-        create_user(username, password, user_type, privilege_level)
-        print("User created successfully.")
+        if user_type not in ["patient", "staff"]:
+            print("Invalid user type. Please choose 'patient' or 'staff'.")
+        else:
+            create_user(username, password, user_type)
+            print("User created successfully.")
 
     elif choice == "2":
         username = input("Enter username: ")
@@ -71,17 +110,17 @@ while True:
 
     elif choice == "3":
         if user_type == "staff":
-            print("dddddddddddddd")
+            patient = input("Enter patient name: ")
             data_type = input("Enter data type (personal, sickness, drug, lab): ")
             data = input("Enter data: ")
-            sensitivity_level = int(input("Enter sensitivity level: "))
-            write_data(username, data_type, data, sensitivity_level)
+            sensitivity_level = int(input("Enter sensitivity level:0 to 10 "))
+            write_data(username, password, data_type, data, sensitivity_level, patient)
         else:
             print("Patients cannot write data.")
 
     elif choice == "4":
         data_type = input("Enter data type (personal, sickness, drug, lab): ")
-        read_data(username, data_type)
+        read_data(username, password, data_type)
 
     elif choice == "5":
         print("Exiting program.")

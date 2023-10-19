@@ -1,4 +1,0 @@
-user1,data...,1
-user1,data...,1
-user3,data...,1
-user3,data...,2

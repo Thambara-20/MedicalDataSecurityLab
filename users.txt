@@ -1,4 +1,2 @@
-user1,5f4dcc3b5aa765d61d8327deb882cf99,user,1
-
-user2,5f4dcc3b5aa765d61d8327deb882cf99,user,0
-user3,5f4dcc3b5aa765d61d8327deb882cf99,user,5
+patient1,ec6ef230f1828039ee794566b9c58adc,patient,2
+staff1,8ddf878039b70767c4a5bcf4f0c4f65e,staff,5
